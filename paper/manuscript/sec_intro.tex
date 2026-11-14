@@ -1,0 +1,29 @@
+\section{Introduction}\label{sec:intro}
+
+Systems that flag illicit activity share an operating condition regardless of domain: they are trained on labelled history and applied to events that have not yet happened. Money launderers change their methods, markets open and close, and attack tools come and go, so the data on which a detector is judged in deployment is never an exchangeable sample of the data on which it was built. An evaluation that shuffles past and future together answers a different and easier question than the one an operator needs answered, and the security literature has documented repeatedly how much this inflates reported performance~\cite{pendlebury2019,arp2022,kapoor2023}.
+
+This paper examines the issue empirically in two domains that are usually studied apart. The first is the detection of illicit activity in Bitcoin, at the level of transactions and at the level of the wallets (addresses) behind them, using the Elliptic++ data set~\cite{elmougy2023}, an extension of the widely used Elliptic data set~\cite{weber2019}. The second is the detection of attacks in network traffic, using NetFlow records from UGR'16~\cite{macia2018}. We call these three views \emph{layers}. They share no entities and cannot be fused into one decision; what they share is the structure of the problem, and we exploit this by evaluating all three with a single protocol so that their behaviour can be compared.
+
+\subsection{Motivation and gap}
+Three gaps motivate the study.
+
+\emph{Published wallet-level results lack a stated row protocol.} Elliptic++ distributes wallet features with one row for each time step in which an address appears. We find that an address has identical feature values in all of its rows and that the file contains several hundred thousand exact duplicates (Section~\ref{sec:data-wallets}). What a ``time-step split'' means for such a file is not defined by the data set paper, and different readings change the measured F1 by more than 0.5 (Section~\ref{sec:res-split}).
+
+\emph{The value of graph information is contested.} Results on Elliptic have swung between graph networks outperforming feature-based models and the reverse, with recent work attributing reported graph gains to leakage through test-period adjacency~\cite{maganti2026}. Whether simple, precomputed neighbourhood statistics help a tree ensemble, and whether the answer is the same for transactions and for wallets, has not been established under a leakage-controlled protocol.
+
+\emph{Failure over time is reported, but rarely diagnosed.} That models on Elliptic degrade after a dark-market shutdown is known since the data set was released~\cite{weber2019}. Whether the loss lies in the ranking of entities or in the decision threshold, and which of the two retraining repairs, determines what an operator should do, and published accounts differ~\cite{bhatt2026}.
+
+\subsection{Approach}
+We keep the modelling deliberately conventional: an average of LightGBM, XGBoost and Random Forest models, with features derived from the transaction and address graphs or from per-source aggregation of network flows. The contribution lies in the evaluation. Models are fitted on early time steps, early stopping and thresholds are fixed on a later validation period, and the test period is touched once. Each result is accompanied by bootstrap intervals, by supervised and unsupervised reference models, by an in-pipeline reproduction of the strongest published baseline, and by targeted analyses that test specific explanations: feature-group ablations, causally restricted neighbourhoods, random against temporal splits, and static against periodically retrained models.
+
+\subsection{Findings}
+The study supports the following claims, each of which is qualified in the sections cited.
+\begin{itemize}
+\item \textbf{Parity, not progress, on transactions.} The ensemble reaches illicit-class F1 0.829 on the standard test period. This equals the best published value, and a paired bootstrap cannot separate it from a default 50-tree Random Forest (Section~\ref{sec:res-published}).
+\item \textbf{Graph structure matters for wallets and hardly for transactions.} Graph-derived features raise wallet F1 from 0.357 to 0.710, and nine structural descriptors carry most of the gain; for transactions the gain is 0.018. We explain the asymmetry by label homophily and by the neighbourhood aggregates already present in the transaction features, and show that the wallet gain does not depend on adjacency to future wallets (Section~\ref{sec:res-graph}).
+\item \textbf{A published wallet baseline is not reproducible under temporal splits.} The reported F1 of 0.845 becomes 0.25 to 0.39 under time-ordered splits and 0.87 under a random split of the same data (Section~\ref{sec:res-split}).
+\item \textbf{Ranking and threshold failures are distinct and occur in sequence.} After the shutdown a static transaction model loses its ranking ability (PR-AUC 0.06). Retraining restores the ranking (PR-AUC 0.62) but not the decisions at a fixed threshold (Section~\ref{sec:res-drift}).
+\item \textbf{Anomalous is not illicit.} An unsupervised detector ranks illicit transactions as more typical than licit ones (Section~\ref{sec:res-unsup}).
+\item \textbf{The protocol transfers to network flows, with weak results.} On a sample of UGR'16 the ensemble reaches F1 0.610, limited by botnet traffic, and is out-ranked by a simpler model (Section~\ref{sec:res-net}).
+\end{itemize}
+We do not propose a new learning algorithm and we do not claim state-of-the-art accuracy. Several of the findings are negative, and Section~\ref{sec:threats} lists the limitations that bound all of them. The code, the configuration and the analysis scripts that generate every number in the paper accompany the manuscript.

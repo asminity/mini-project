@@ -1,0 +1,14 @@
+% Draft build wrapper: compiles main.tex unchanged, but replaces any \input of a
+% section file that does not exist yet with a visible placeholder instead of
+% stopping. Once every section file exists, compile main.tex directly.
+%   tectonic -X compile main_draft.tex --outdir build/tectonic --keep-logs
+\makeatletter
+\AtBeginDocument{%
+  \let\draft@input\input
+  \renewcommand{\input}[1]{%
+    \IfFileExists{#1.tex}{\draft@input{#1}}{%
+      \typeout{DRAFT: missing section file #1.tex}%
+      \par\medskip\noindent\fbox{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{%
+        \textbf{Section not yet written:} \texttt{\detokenize{#1}.tex}}}\par\medskip}}}
+\makeatother
+\input{main}

@@ -1,0 +1,390 @@
+% Requires \usepackage{booktabs}
+
+\begin{table}[t]
+\centering
+\caption{Ensemble performance on the positive class, per layer.}
+\label{tab:headline}
+\begin{tabular}{llllllrrr}
+\toprule
+Layer & Test set & Positives & Precision [95\% CI] & Recall [95\% CI] & F1 [95\% CI] & PR-AUC & ROC-AUC & MCC \\
+\midrule
+Layer 1: transactions (Elliptic++) & 16,670 labelled & 1,083 illicit & 0.961 [0.947, 0.974] & 0.729 [0.704, 0.758] & 0.829 [0.811, 0.850] & 0.806 & 0.942 & 0.828 \\
+Layer 2: wallets (Elliptic++) & 92,451 labelled & 4,889 illicit & 0.908 [0.898, 0.917] & 0.583 [0.570, 0.596] & 0.710 [0.699, 0.721] & 0.721 & 0.937 & 0.716 \\
+Layer 3: network traffic (UGR'16) & 82,460 labelled & 769 attack & 0.715 [0.679, 0.751] & 0.547 [0.514, 0.587] & 0.620 [0.589, 0.649] & 0.664 & 0.980 & 0.623 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Layer 1: transactions (Elliptic++) - temporal data split.}
+\label{tab:transaction-split}
+\begin{tabular}{llrrrrr}
+\toprule
+split & time steps & labelled & illicit & licit & illicit \% & unlabelled \\
+\midrule
+fit & 1-29 & 26,381 & 2,871 & 23,510 & 10.9 & 94,423 \\
+validation & 30-34 & 3,513 & 591 & 2,922 & 16.8 & 11,948 \\
+train (fit+val) & 1-34 & 29,894 & 3,462 & 26,432 & 11.6 & 106,371 \\
+test & 35-49 & 16,670 & 1,083 & 15,587 & 6.5 & 50,834 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Layer 2: wallets (Elliptic++) - temporal data split.}
+\label{tab:wallet-split}
+\begin{tabular}{llrrrrr}
+\toprule
+split & time steps & labelled & illicit & licit & illicit \% & unlabelled \\
+\midrule
+fit & 1-29 & 152,613 & 7,624 & 144,989 & 5.0 & 321,507 \\
+validation & 30-34 & 20,290 & 1,753 & 18,537 & 8.6 & 36,430 \\
+train (fit+val) & 1-34 & 172,903 & 9,377 & 163,526 & 5.4 & 357,937 \\
+test & 35-49 & 92,451 & 4,889 & 87,562 & 5.3 & 199,651 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Layer 3: network traffic (UGR'16) - temporal data split.}
+\label{tab:network-split}
+\begin{tabular}{llrrrrr}
+\toprule
+split & days & labelled & attack & benign & attack \% & unlabelled \\
+\midrule
+fit & 1-3 & 387,783 & 3,745 & 384,038 & 1.0 & 7,590 \\
+validation & 4-4 & 136,063 & 872 & 135,191 & 0.6 & 2,459 \\
+train (fit+val) & 1-4 & 523,846 & 4,617 & 519,229 & 0.9 & 10,049 \\
+test & 5-5 & 82,460 & 769 & 81,691 & 0.9 & 1,215 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Layer 1: transactions (Elliptic++) - all models on the test period.}
+\label{tab:transaction-models}
+\begin{tabular}{lllrrrrrrrrr}
+\toprule
+Model & Role & Features & Precision & Recall & F1 & F1 seed std & FPR & MCC & PR-AUC & ROC-AUC & Micro-F1 \\
+\midrule
+Logistic Regression & baseline & original & 0.895 & 0.519 & 0.657 & -- & 0.004 & 0.666 & 0.718 & 0.894 & 0.965 \\
+Isolation Forest (unsupervised) & baseline & original & 0.064 & 0.989 & 0.121 & -- & 1.000 & -0.086 & 0.036 & 0.168 & 0.064 \\
+Random Forest (50 trees, default) & baseline & original & 0.959 & 0.719 & 0.822 & -- & 0.002 & 0.821 & 0.783 & 0.913 & 0.980 \\
+LightGBM & member & all & 0.952 & 0.731 & 0.827 & 0.000 & 0.003 & 0.825 & 0.808 & 0.938 & 0.980 \\
+XGBoost & member & all & 0.885 & 0.734 & 0.803 & 0.005 & 0.007 & 0.794 & 0.812 & 0.945 & 0.977 \\
+Random Forest & member & all & 0.961 & 0.714 & 0.819 & 0.000 & 0.002 & 0.819 & 0.801 & 0.941 & 0.980 \\
+Ensemble (ours) & ensemble & all & 0.961 & 0.729 & 0.829 & -- & 0.002 & 0.828 & 0.806 & 0.942 & 0.981 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Layer 1: transactions (Elliptic++) - ensemble metrics with 95\% bootstrap intervals.}
+\label{tab:transaction-ci}
+\begin{tabular}{lrrr}
+\toprule
+Metric & Estimate & CI 2.5\% & CI 97.5\% \\
+\midrule
+precision & 0.961 & 0.947 & 0.974 \\
+recall & 0.729 & 0.704 & 0.758 \\
+f1 & 0.829 & 0.811 & 0.850 \\
+fpr & 0.002 & 0.001 & 0.003 \\
+mcc & 0.828 & 0.811 & 0.848 \\
+pr\_auc & 0.806 & 0.783 & 0.827 \\
+roc\_auc & 0.942 & 0.935 & 0.949 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Layer 2: wallets (Elliptic++) - all models on the test period.}
+\label{tab:wallet-models}
+\begin{tabular}{lllrrrrrrrrr}
+\toprule
+Model & Role & Features & Precision & Recall & F1 & F1 seed std & FPR & MCC & PR-AUC & ROC-AUC & Micro-F1 \\
+\midrule
+Logistic Regression & baseline & original & 0.354 & 0.403 & 0.376 & -- & 0.041 & 0.340 & 0.264 & 0.810 & 0.929 \\
+Isolation Forest (unsupervised) & baseline & original & 0.055 & 0.948 & 0.104 & -- & 0.908 & 0.032 & 0.061 & 0.552 & 0.137 \\
+Random Forest (50 trees, default) & baseline & original & 0.381 & 0.187 & 0.250 & -- & 0.017 & 0.239 & 0.298 & 0.856 & 0.941 \\
+LightGBM & member & all & 0.957 & 0.560 & 0.707 & 0.003 & 0.001 & 0.722 & 0.721 & 0.937 & 0.975 \\
+XGBoost & member & all & 0.928 & 0.502 & 0.651 & 0.043 & 0.002 & 0.671 & 0.704 & 0.934 & 0.972 \\
+Random Forest & member & all & 0.940 & 0.519 & 0.669 & -- & 0.002 & 0.687 & 0.701 & 0.933 & 0.973 \\
+Ensemble (ours) & ensemble & all & 0.908 & 0.583 & 0.710 & -- & 0.003 & 0.716 & 0.721 & 0.937 & 0.975 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Layer 2: wallets (Elliptic++) - ensemble metrics with 95\% bootstrap intervals.}
+\label{tab:wallet-ci}
+\begin{tabular}{lrrr}
+\toprule
+Metric & Estimate & CI 2.5\% & CI 97.5\% \\
+\midrule
+precision & 0.908 & 0.898 & 0.917 \\
+recall & 0.583 & 0.570 & 0.596 \\
+f1 & 0.710 & 0.699 & 0.721 \\
+fpr & 0.003 & 0.003 & 0.004 \\
+mcc & 0.716 & 0.706 & 0.726 \\
+pr\_auc & 0.721 & 0.709 & 0.730 \\
+roc\_auc & 0.937 & 0.934 & 0.940 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Layer 3: network traffic (UGR'16) - all models on the test period.}
+\label{tab:network-models}
+\begin{tabular}{lllrrrrrrrrr}
+\toprule
+Model & Role & Features & Precision & Recall & F1 & F1 seed std & FPR & MCC & PR-AUC & ROC-AUC & Micro-F1 \\
+\midrule
+Logistic Regression & baseline & all & 0.255 & 0.525 & 0.343 & -- & 0.014 & 0.358 & 0.201 & 0.931 & 0.981 \\
+Isolation Forest (unsupervised) & baseline & all & 0.340 & 0.105 & 0.161 & -- & 0.002 & 0.185 & 0.117 & 0.832 & 0.990 \\
+Random Forest (50 trees, default) & baseline & all & 0.874 & 0.135 & 0.234 & -- & 0.000 & 0.342 & 0.794 & 0.960 & 0.992 \\
+LightGBM & member & all & 0.647 & 0.576 & 0.609 & 0.157 & 0.003 & 0.607 & 0.652 & 0.976 & 0.993 \\
+XGBoost & member & all & 0.811 & 0.651 & 0.722 & 0.035 & 0.001 & 0.724 & 0.736 & 0.971 & 0.995 \\
+Random Forest & member & all & 0.235 & 0.176 & 0.201 & -- & 0.005 & 0.197 & 0.422 & 0.978 & 0.987 \\
+Ensemble (ours) & ensemble & all & 0.715 & 0.547 & 0.620 & -- & 0.002 & 0.623 & 0.664 & 0.980 & 0.994 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Layer 3: network traffic (UGR'16) - ensemble metrics with 95\% bootstrap intervals.}
+\label{tab:network-ci}
+\begin{tabular}{lrrr}
+\toprule
+Metric & Estimate & CI 2.5\% & CI 97.5\% \\
+\midrule
+precision & 0.715 & 0.679 & 0.751 \\
+recall & 0.547 & 0.514 & 0.587 \\
+f1 & 0.620 & 0.589 & 0.649 \\
+fpr & 0.002 & 0.002 & 0.002 \\
+mcc & 0.623 & 0.592 & 0.651 \\
+pr\_auc & 0.664 & 0.632 & 0.697 \\
+roc\_auc & 0.980 & 0.976 & 0.984 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Layer 1: transactions (Elliptic++) - illicit-class results against prior work.}
+\label{tab:transaction-literature}
+\begin{tabular}{llrrr}
+\toprule
+Source & Model & Precision & Recall & F1 \\
+\midrule
+Elmougy \& Liu (2023), as published & Logistic Regression & 0.328 & 0.707 & 0.448 \\
+Elmougy \& Liu (2023), as published & Random Forest & 0.975 & 0.719 & 0.828 \\
+Elmougy \& Liu (2023), as published & MLP & 0.611 & 0.613 & 0.612 \\
+Elmougy \& Liu (2023), as published & LSTM & 0.709 & 0.223 & 0.339 \\
+Elmougy \& Liu (2023), as published & XGBoost & 0.793 & 0.718 & 0.754 \\
+Elmougy \& Liu (2023), as published & RF+MLP+XGB ensemble & 0.962 & 0.723 & 0.826 \\
+Our reproduction (same split, original features, threshold 0.5) & Random Forest (50 trees, default) & 0.959 & 0.719 & 0.822 \\
+This work & LightGBM & 0.952 & 0.731 & 0.827 \\
+This work & XGBoost & 0.885 & 0.734 & 0.803 \\
+This work & Random Forest & 0.961 & 0.714 & 0.819 \\
+This work & Ensemble (ours) & 0.961 & 0.729 & 0.829 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Layer 2: wallets (Elliptic++) - illicit-class results against prior work.}
+\label{tab:wallet-literature}
+\begin{tabular}{llrrr}
+\toprule
+Source & Model & Precision & Recall & F1 \\
+\midrule
+Elmougy \& Liu (2023), as published & Logistic Regression & 0.477 & 0.046 & 0.083 \\
+Elmougy \& Liu (2023), as published & Random Forest & 0.911 & 0.789 & 0.845 \\
+Elmougy \& Liu (2023), as published & MLP & 0.708 & 0.502 & 0.587 \\
+Elmougy \& Liu (2023), as published & LSTM & 0.922 & 0.033 & 0.064 \\
+Elmougy \& Liu (2023), as published & XGBoost & 0.869 & 0.534 & 0.662 \\
+Elmougy \& Liu (2023), as published & RF+MLP+XGB ensemble & 0.933 & 0.572 & 0.709 \\
+Our reproduction (same split, original features, threshold 0.5) & Random Forest (50 trees, default) & 0.381 & 0.187 & 0.250 \\
+This work & LightGBM & 0.957 & 0.560 & 0.707 \\
+This work & XGBoost & 0.928 & 0.502 & 0.651 \\
+This work & Random Forest & 0.940 & 0.519 & 0.669 \\
+This work & Ensemble (ours) & 0.908 & 0.583 & 0.710 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Wallet layer - effect of the evaluation protocol.}
+\label{tab:wallet-protocol}
+\begin{tabular}{lrrrr}
+\toprule
+Protocol & Precision & Recall & F1 & PR-AUC \\
+\midrule
+first-seen (one row per wallet, leak-free) & 0.908 & 0.583 & 0.710 & 0.721 \\
+row per wallet per time step & 0.909 & 0.573 & 0.702 & 0.715 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Ensemble with and without graph-derived features.}
+\label{tab:ablation}
+\begin{tabular}{llrrrrrr}
+\toprule
+Layer & Features & \# features & Precision & Recall & F1 & PR-AUC & ROC-AUC \\
+\midrule
+transaction & Original features only & 182 & 0.911 & 0.731 & 0.811 & 0.800 & 0.934 \\
+transaction & + graph features (full model) & 555 & 0.961 & 0.729 & 0.829 & 0.806 & 0.942 \\
+transaction & Change from graph features & 373 & 0.050 & -0.002 & 0.018 & 0.005 & 0.009 \\
+wallet & Original features only & 55 & 0.634 & 0.249 & 0.357 & 0.426 & 0.892 \\
+wallet & + graph features (full model) & 174 & 0.908 & 0.583 & 0.710 & 0.721 & 0.937 \\
+wallet & Change from graph features & 119 & 0.274 & 0.335 & 0.353 & 0.295 & 0.045 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Transaction layer - pooled results before and after the dark-market shutdown (time step 43).}
+\label{tab:drift}
+\begin{tabular}{lrrrrrr}
+\toprule
+Period & Illicit & Detected & False alarms & Precision & Recall & F1 \\
+\midrule
+Steps 35-42 (before shutdown) & 914 & 787 & 13 & 0.984 & 0.861 & 0.918 \\
+Steps 43-49 (after shutdown) & 169 & 3 & 19 & 0.136 & 0.018 & 0.031 \\
+All test steps & 1,083 & 790 & 32 & 0.961 & 0.729 & 0.829 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Layer 2: wallets (Elliptic++) - ensemble results per time step.}
+\label{tab:wallet-steps}
+\begin{tabular}{rrrrrrrrrr}
+\toprule
+time\_step & n\_labelled & n\_positive & n\_flagged & tp & fp & fn & precision & recall & f1 \\
+\midrule
+35 & 5,172 & 429 & 400 & 388 & 12 & 41 & 0.970 & 0.904 & 0.936 \\
+36 & 8,755 & 589 & 616 & 586 & 30 & 3 & 0.951 & 0.995 & 0.973 \\
+37 & 3,268 & 429 & 360 & 338 & 22 & 91 & 0.939 & 0.788 & 0.857 \\
+38 & 3,376 & 183 & 109 & 103 & 6 & 80 & 0.945 & 0.563 & 0.705 \\
+39 & 3,646 & 127 & 75 & 71 & 4 & 56 & 0.947 & 0.559 & 0.703 \\
+40 & 8,257 & 442 & 220 & 183 & 37 & 259 & 0.832 & 0.414 & 0.553 \\
+41 & 5,642 & 172 & 105 & 104 & 1 & 68 & 0.990 & 0.605 & 0.751 \\
+42 & 9,188 & 399 & 199 & 174 & 25 & 225 & 0.874 & 0.436 & 0.582 \\
+43 & 5,928 & 97 & 8 & 3 & 5 & 94 & 0.375 & 0.031 & 0.057 \\
+44 & 7,877 & 279 & 240 & 204 & 36 & 75 & 0.850 & 0.731 & 0.786 \\
+45 & 8,871 & 27 & 57 & 1 & 56 & 26 & 0.018 & 0.037 & 0.024 \\
+46 & 4,335 & 508 & 513 & 497 & 16 & 11 & 0.969 & 0.978 & 0.974 \\
+47 & 6,724 & 196 & 5 & 1 & 4 & 195 & 0.200 & 0.005 & 0.010 \\
+48 & 7,089 & 381 & 31 & 22 & 9 & 359 & 0.710 & 0.058 & 0.107 \\
+49 & 4,323 & 631 & 203 & 176 & 27 & 455 & 0.867 & 0.279 & 0.422 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Layer 3: network traffic (UGR'16) - ensemble results per day.}
+\label{tab:network-steps}
+\begin{tabular}{rrrrrrrrrr}
+\toprule
+time\_step & n\_labelled & n\_positive & n\_flagged & tp & fp & fn & precision & recall & f1 \\
+\midrule
+5 & 82,460 & 769 & 589 & 421 & 168 & 348 & 0.715 & 0.547 & 0.620 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Layer 1: transactions (Elliptic++) - verdicts on the test period by true label.}
+\label{tab:transaction-verdicts}
+\begin{tabular}{lrrrr}
+\toprule
+True label (test period) & licit & suspicious & illicit & total \\
+\midrule
+illicit & 293 & 0 & 790 & 1,083 \\
+licit & 15,555 & 0 & 32 & 15,587 \\
+unlabelled & 47,060 & 0 & 3,774 & 50,834 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Layer 2: wallets (Elliptic++) - verdicts on the test period by true label.}
+\label{tab:wallet-verdicts}
+\begin{tabular}{lrrrr}
+\toprule
+True label (test period) & licit & suspicious & illicit & total \\
+\midrule
+illicit & 1,497 & 541 & 2,851 & 4,889 \\
+licit & 82,824 & 4,448 & 290 & 87,562 \\
+unlabelled & 157,820 & 31,737 & 10,094 & 199,651 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Layer 3: network traffic (UGR'16) - verdicts on the test period by true label.}
+\label{tab:network-verdicts}
+\begin{tabular}{lrrrr}
+\toprule
+True label (test period) & benign & suspicious & attack & total \\
+\midrule
+attack & 62 & 286 & 421 & 769 \\
+benign & 78,288 & 3,235 & 168 & 81,691 \\
+unlabelled & 1,106 & 97 & 12 & 1,215 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Detection rate per attack type (test period).}
+\label{tab:network-attacks}
+\begin{tabular}{lrrrr}
+\toprule
+attack\_type & windows & detected & detection\_rate & detected\_or\_suspicious\_rate \\
+\midrule
+nerisbotnet & 666 & 326 & 0.489 & 0.919 \\
+dos & 72 & 72 & 1.000 & 1.000 \\
+scan44 & 24 & 19 & 0.792 & 0.792 \\
+scan11 & 7 & 4 & 0.571 & 0.571 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Precision corrected for background down-sampling.}
+\label{tab:network-sampling}
+\begin{tabular}{lr}
+\toprule
+Quantity & Value \\
+\midrule
+background\_rate & 0.2500 \\
+precision\_sampled & 0.7148 \\
+precision\_corrected & 0.3852 \\
+recall & 0.5475 \\
+f1\_corrected & 0.4522 \\
+fpr & 0.0021 \\
+\bottomrule
+\end{tabular}
+\end{table}

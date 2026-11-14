@@ -1,0 +1,13 @@
+﻿# Source datasets are large and can be downloaded separately (see README.md).
+Dataset_elliptic++/
+Dataset_UGR/
+
+# Generated experiment results and archived runs can be regenerated with run_all.py.
+outputs/
+old_outputs_v1/
+paper/analysis/results/
+
+# Python runtime files and logs.
+__pycache__/
+*.py[cod]
+*.log

@@ -1,0 +1,36 @@
+\section{Data and Problem Formulation}\label{sec:data}
+
+All three layers are cast as the same task. Entities $i = 1, \dots, n$ carry a feature vector $\mathbf{x}_i \in \mathbb{R}^d$, a discrete time index $t_i$ and a label $y_i \in \{1, 0, \varnothing\}$ (positive, negative, unlabelled). A detector outputs a score $\hat{s}_i \in [0,1]$ and a verdict. Given a cut-off time $T$, only entities with $t_i \le T$ and $y_i \neq \varnothing$ may be used to fit models or to choose any hyper-parameter or threshold; performance is measured on labelled entities with $t_i > T$. Table~\ref{tab:data} summarises the three data sets.
+
+\begin{table*}[t]
+\caption{Data sets and temporal splits. Counts are labelled entities; the positive class is illicit (Elliptic++) or attack (UGR'16).}\label{tab:data}
+\centering
+\begin{tabular}{llrrrrrrrr}
+\toprule
+ & & & & \multicolumn{2}{c}{Fit} & \multicolumn{2}{c}{Validation} & \multicolumn{2}{c}{Test} \\
+\cmidrule(lr){5-6}\cmidrule(lr){7-8}\cmidrule(lr){9-10}
+Layer & Entity & Entities & Unlabelled & Labelled & Positive & Labelled & Positive & Labelled & Positive \\
+\midrule
+Transactions & transaction & 203,769 & 157,205 & 26,381 & 2,871 (10.9\%) & 3,513 & 591 (16.8\%) & 16,670 & 1,083 (6.5\%) \\
+Wallets & address & 822,942 & 557,588 & 152,613 & 7,624 (5.0\%) & 20,290 & 1,753 (8.6\%) & 92,451 & 4,889 (5.3\%) \\
+Network & source IP $\times$ minute & 2,420,698 & 11,264 & 1,540,275 & 3,745 (0.24\%) & 542,303 & 872 (0.16\%) & 326,856 & 769 (0.24\%) \\
+\bottomrule
+\end{tabular}
+\tablenote{Transactions and wallets: fit on time steps 1--29, validation on 30--34, test on 35--49. Network: fit on 27--29 July 2016, validation on 30 July, test on 31 July. Unlabelled network windows are those whose only non-background flows carry the \texttt{blacklist} label.}
+\end{table*}
+
+\subsection{Elliptic++ transactions}
+The transaction view of Elliptic++~\cite{elmougy2023} contains the 203,769 transactions of the Elliptic data set~\cite{weber2019}, each with a time step from 1 to 49, 93 local and 72 aggregated anonymised features inherited from Elliptic, and 17 additional features (182 in total besides the time step). There are 234,355 directed edges that represent a flow of bitcoin from one transaction to the next. Labels mark 4,545 transactions as illicit and 42,019 as licit; the remaining 77\% are unknown. %%TXEDGEFACT
+
+\subsection{Elliptic++ wallets}\label{sec:data-wallets}
+The actor view lists 822,942 addresses, of which 14,266 are labelled illicit and 251,088 licit. The released feature file has 1,268,260 rows, one for each time step in which an address appears, and 55 feature columns besides the address and the time step. Two properties of this file matter for evaluation and are, to our knowledge, not stated in the data-set paper:
+\begin{itemize}
+\item \emph{Features are per address, not per appearance.} For every one of the 822,942 addresses, all rows of that address carry identical feature values. The features (for example the first and last block in which the address appears, its lifetime in blocks and the number of time steps in which it is active) are therefore aggregates over the whole observation period. The same property is noted independently in~\cite{malik2026}.
+\item \emph{The file contains exact duplicates.} 347,569 rows repeat an (address, time step) pair that is already present; 920,691 distinct pairs remain.
+\end{itemize}
+A consequence is that a row-level split on the time step places the same address, with the same feature vector and the same label, on both sides of the split whenever the address is active in both periods. We therefore define the wallet task with one row per address and assign each address to the time step of its \emph{first} appearance, $t_i = \min\{t : i \text{ active at } t\}$, so that no test wallet has been seen in training. We also run the row-per-appearance variant for comparison. The address-to-address edge list contains 2,868,964 rows; after removing self-loops and duplicates, 2,775,637 directed edges connect the addresses.
+
+The first property also implies a limitation that no split can remove: the feature vector of a wallet contains information from after its first appearance. We quantify the exposure in Section~\ref{sec:res-graph} and list it among the threats to validity.
+
+\subsection{UGR'16 network flows}\label{sec:data-ugr}
+UGR'16~\cite{macia2018} provides NetFlow records with an end timestamp, duration, source and destination address and port, protocol, TCP flags, packet and byte counts, and a label. We use a publicly redistributed sample of 5,000,000 flows~\cite{ugrsample} that covers 27--31 July 2016, the first days of the test period. The sample is published without documentation of how its flows were selected. It contains 4,931,787 background flows and 68,213 labelled flows: 27,419 \texttt{dos}, 13,025 \texttt{scan44}, 2,804 \texttt{scan11}, 6,234 \texttt{nerisbotnet}, 4,961 \texttt{anomaly-spam} and 13,770 \texttt{blacklist}. At roughly one million flows per day for the network of an Internet service provider, the file can only be a subsample of the traffic of those days, so each host's activity is observed in part. Attack labels other than \texttt{anomaly-spam} first appear on 28 July.

@@ -1,0 +1,50 @@
+\section{Experimental Setup}\label{sec:setup}
+
+\subsection{Research questions}
+The experiments are organised around six questions.
+\begin{itemize}
+\item \textbf{RQ1.} How does the ensemble compare with reference models and with published results when all are evaluated on a later, unseen period?
+\item \textbf{RQ2.} What do graph-derived features contribute at the transaction level and at the wallet level, and does the contribution depend on look-ahead through the graph?
+\item \textbf{RQ3.} How much does the choice of split (temporal or random, and the unit of a row) change the measured performance?
+\item \textbf{RQ4.} How stable is performance over time, is a loss caused by ranking or by the threshold, and how much does periodic retraining recover?
+\item \textbf{RQ5.} Do validation-selected thresholds transfer to the test period, and is the three-way verdict useful?
+\item \textbf{RQ6.} Does the protocol carry over to network-flow data, and what does it show there?
+\end{itemize}
+
+\subsection{Configuration}
+Table~\ref{tab:config} lists the settings, which were fixed before the test period was evaluated and are identical across layers unless stated. No hyper-parameter search was run; the values are conventional defaults for tabular data of this size. For transactions and wallets we follow the split of prior work~\cite{weber2019,elmougy2023}, training on time steps 1--34 and testing on 35--49, and reserve steps 30--34 for validation. For the network layer the first three days are used for fitting, the fourth for validation and the fifth for testing.
+
+\begin{table}[t]
+\caption{Model and protocol settings}\label{tab:config}
+\centering
+\begin{tabular}{lp{5.3cm}}
+\toprule
+Component & Setting \\
+\midrule
+LightGBM & learning rate 0.05, 63 leaves, row subsample 0.8, column subsample 0.4, $\lambda_2 = 1$ \\
+XGBoost & histogram trees, learning rate 0.05, depth 8, row subsample 0.8, column subsample 0.4, $\lambda_2 = 1$ \\
+Early stopping & validation PR-AUC, patience 150, at most 2000 rounds \\
+Random Forest & 600 trees (300 for wallets and network), $\sqrt{d}$ features per split, balanced subsample weights \\
+Seeds & 3 per learner for transactions; 2 for wallets and network (1 for their Random Forest) \\
+Logistic regression & quantile transform to normal, $C = 1$, balanced weights \\
+Isolation Forest & 300 trees, 4096 samples per tree, licit or benign training rows only \\
+Published baseline & Random Forest, 50 trees, defaults, threshold 0.5 \\
+Imputation & training-period medians \\
+Bootstrap & 500 resamples of the test set \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Supplementary analyses}
+Beyond the main runs, the following analyses were designed to probe specific explanations. Each uses a single LightGBM model with the settings of Table~\ref{tab:config} unless stated, so that differences are attributable to the factor under study and not to ensembling.
+\begin{itemize}
+\item \emph{Feature-group ablation} (wallets, three seeds): original features, plus structural descriptors, plus in- or out-neighbour means, and graph-derived features alone.
+\item \emph{Causal neighbourhood} (wallets, three seeds): neighbour means and degrees restricted by~\eqref{eq:causal}.
+\item \emph{Split protocol}: the same learners under a stratified random 70/30 split, for transactions, for one row per wallet, and for the wallet file as distributed.
+\item \emph{Prequential retraining}: for every test step $t$, a model is trained on all labelled data with time index below $t$ and applied to step $t$. This assumes labels are available immediately after each step and is therefore an optimistic bound on what retraining can achieve~\cite{dalpozzolo2018}. A fixed number of rounds (600 for transactions, 80 for wallets) and a fixed threshold of 0.5 are used for both the static and the retrained model.
+\item \emph{Drift diagnosis}: a classifier is trained to distinguish illicit (or licit) transactions of two periods; its cross-validated ROC-AUC measures how separable the periods are.
+\item \emph{Paired bootstrap} of the F1 difference between the ensemble and the reproduced baseline on identical resamples of the test set.
+\end{itemize}
+
+\subsection{Implementation}
+The pipeline is implemented in Python with scikit-learn, LightGBM and XGBoost and runs on a laptop CPU with 16\,GB of memory; no GPU is used. The Elliptic++ experiments take between 8 and 17 minutes per configuration and the network experiment on all 2.4 million windows takes 63 minutes. Every table and figure in this paper is generated from files written by the released scripts, and the commands that reproduce them are listed in the repository.
