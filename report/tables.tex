@@ -8,9 +8,9 @@
 \toprule
 Layer & Test set & Positives & Precision [95\% CI] & Recall [95\% CI] & F1 [95\% CI] & PR-AUC & ROC-AUC & MCC \\
 \midrule
-Layer 1: transactions (Elliptic++) & 16,670 labelled & 1,083 illicit & 0.961 [0.947, 0.974] & 0.729 [0.704, 0.758] & 0.829 [0.811, 0.850] & 0.806 & 0.942 & 0.828 \\
-Layer 2: wallets (Elliptic++) & 92,451 labelled & 4,889 illicit & 0.908 [0.898, 0.917] & 0.583 [0.570, 0.596] & 0.710 [0.699, 0.721] & 0.721 & 0.937 & 0.716 \\
-Layer 3: network traffic (UGR'16) & 82,460 labelled & 769 attack & 0.715 [0.679, 0.751] & 0.547 [0.514, 0.587] & 0.620 [0.589, 0.649] & 0.664 & 0.980 & 0.623 \\
+Layer 1: transactions (Elliptic++) & 16,670 labelled & 1,083 illicit & 0.961 [0.947, 0.973] & 0.729 [0.704, 0.758] & 0.829 [0.812, 0.850] & 0.806 & 0.942 & 0.828 \\
+Layer 2: wallets (Elliptic++) & 92,451 labelled & 4,889 illicit & 0.974 [0.968, 0.980] & 0.533 [0.519, 0.547] & 0.689 [0.677, 0.701] & 0.722 & 0.938 & 0.711 \\
+Layer 3: network traffic (UGR'16) & 7,345 labelled & 769 attack & 0.833 [0.804, 0.861] & 0.675 [0.637, 0.707] & 0.746 [0.718, 0.770] & 0.829 & 0.969 & 0.724 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -55,10 +55,10 @@ test & 35-49 & 92,451 & 4,889 & 87,562 & 5.3 & 199,651 \\
 \toprule
 split & days & labelled & attack & benign & attack \% & unlabelled \\
 \midrule
-fit & 1-3 & 387,783 & 3,745 & 384,038 & 1.0 & 7,590 \\
-validation & 4-4 & 136,063 & 872 & 135,191 & 0.6 & 2,459 \\
-train (fit+val) & 1-4 & 523,846 & 4,617 & 519,229 & 0.9 & 10,049 \\
-test & 5-5 & 82,460 & 769 & 81,691 & 0.9 & 1,215 \\
+fit & 1-3 & 34,526 & 3,745 & 30,781 & 10.8 & 7,590 \\
+validation & 4-4 & 11,659 & 872 & 10,787 & 7.5 & 2,459 \\
+train (fit+val) & 1-4 & 46,185 & 4,617 & 41,568 & 10.0 & 10,049 \\
+test & 5-5 & 7,345 & 769 & 6,576 & 10.5 & 1,215 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -71,12 +71,12 @@ test & 5-5 & 82,460 & 769 & 81,691 & 0.9 & 1,215 \\
 \toprule
 Model & Role & Features & Precision & Recall & F1 & F1 seed std & FPR & MCC & PR-AUC & ROC-AUC & Micro-F1 \\
 \midrule
-Logistic Regression & baseline & original & 0.895 & 0.519 & 0.657 & -- & 0.004 & 0.666 & 0.718 & 0.894 & 0.965 \\
+Logistic Regression & baseline & original & 0.893 & 0.519 & 0.657 & -- & 0.004 & 0.666 & 0.718 & 0.894 & 0.965 \\
 Isolation Forest (unsupervised) & baseline & original & 0.064 & 0.989 & 0.121 & -- & 1.000 & -0.086 & 0.036 & 0.168 & 0.064 \\
-Random Forest (50 trees, default) & baseline & original & 0.959 & 0.719 & 0.822 & -- & 0.002 & 0.821 & 0.783 & 0.913 & 0.980 \\
+Random Forest (50 trees, default) & baseline & original & 0.964 & 0.720 & 0.825 & -- & 0.002 & 0.824 & 0.785 & 0.913 & 0.980 \\
 LightGBM & member & all & 0.952 & 0.731 & 0.827 & 0.000 & 0.003 & 0.825 & 0.808 & 0.938 & 0.980 \\
-XGBoost & member & all & 0.885 & 0.734 & 0.803 & 0.005 & 0.007 & 0.794 & 0.812 & 0.945 & 0.977 \\
-Random Forest & member & all & 0.961 & 0.714 & 0.819 & 0.000 & 0.002 & 0.819 & 0.801 & 0.941 & 0.980 \\
+XGBoost & member & all & 0.896 & 0.736 & 0.808 & 0.006 & 0.006 & 0.800 & 0.814 & 0.944 & 0.977 \\
+Random Forest & member & all & 0.949 & 0.718 & 0.818 & 0.005 & 0.003 & 0.816 & 0.800 & 0.941 & 0.979 \\
 Ensemble (ours) & ensemble & all & 0.961 & 0.729 & 0.829 & -- & 0.002 & 0.828 & 0.806 & 0.942 & 0.981 \\
 \bottomrule
 \end{tabular}
@@ -90,13 +90,13 @@ Ensemble (ours) & ensemble & all & 0.961 & 0.729 & 0.829 & -- & 0.002 & 0.828 & 
 \toprule
 Metric & Estimate & CI 2.5\% & CI 97.5\% \\
 \midrule
-precision & 0.961 & 0.947 & 0.974 \\
+precision & 0.961 & 0.947 & 0.973 \\
 recall & 0.729 & 0.704 & 0.758 \\
-f1 & 0.829 & 0.811 & 0.850 \\
+f1 & 0.829 & 0.812 & 0.850 \\
 fpr & 0.002 & 0.001 & 0.003 \\
 mcc & 0.828 & 0.811 & 0.848 \\
 pr\_auc & 0.806 & 0.783 & 0.827 \\
-roc\_auc & 0.942 & 0.935 & 0.949 \\
+roc\_auc & 0.942 & 0.934 & 0.948 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -109,13 +109,13 @@ roc\_auc & 0.942 & 0.935 & 0.949 \\
 \toprule
 Model & Role & Features & Precision & Recall & F1 & F1 seed std & FPR & MCC & PR-AUC & ROC-AUC & Micro-F1 \\
 \midrule
-Logistic Regression & baseline & original & 0.354 & 0.403 & 0.376 & -- & 0.041 & 0.340 & 0.264 & 0.810 & 0.929 \\
+Logistic Regression & baseline & original & 0.338 & 0.497 & 0.403 & -- & 0.054 & 0.370 & 0.263 & 0.811 & 0.922 \\
 Isolation Forest (unsupervised) & baseline & original & 0.055 & 0.948 & 0.104 & -- & 0.908 & 0.032 & 0.061 & 0.552 & 0.137 \\
-Random Forest (50 trees, default) & baseline & original & 0.381 & 0.187 & 0.250 & -- & 0.017 & 0.239 & 0.298 & 0.856 & 0.941 \\
+Random Forest (50 trees, default) & baseline & original & 0.405 & 0.193 & 0.262 & -- & 0.016 & 0.253 & 0.326 & 0.858 & 0.942 \\
 LightGBM & member & all & 0.957 & 0.560 & 0.707 & 0.003 & 0.001 & 0.722 & 0.721 & 0.937 & 0.975 \\
-XGBoost & member & all & 0.928 & 0.502 & 0.651 & 0.043 & 0.002 & 0.671 & 0.704 & 0.934 & 0.972 \\
-Random Forest & member & all & 0.940 & 0.519 & 0.669 & -- & 0.002 & 0.687 & 0.701 & 0.933 & 0.973 \\
-Ensemble (ours) & ensemble & all & 0.908 & 0.583 & 0.710 & -- & 0.003 & 0.716 & 0.721 & 0.937 & 0.975 \\
+XGBoost & member & all & 0.968 & 0.444 & 0.609 & 0.101 & 0.001 & 0.645 & 0.714 & 0.933 & 0.970 \\
+Random Forest & member & all & 0.939 & 0.442 & 0.601 & -- & 0.002 & 0.633 & 0.703 & 0.934 & 0.969 \\
+Ensemble (ours) & ensemble & all & 0.974 & 0.533 & 0.689 & -- & 0.001 & 0.711 & 0.722 & 0.938 & 0.975 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -128,13 +128,13 @@ Ensemble (ours) & ensemble & all & 0.908 & 0.583 & 0.710 & -- & 0.003 & 0.716 & 
 \toprule
 Metric & Estimate & CI 2.5\% & CI 97.5\% \\
 \midrule
-precision & 0.908 & 0.898 & 0.917 \\
-recall & 0.583 & 0.570 & 0.596 \\
-f1 & 0.710 & 0.699 & 0.721 \\
-fpr & 0.003 & 0.003 & 0.004 \\
-mcc & 0.716 & 0.706 & 0.726 \\
-pr\_auc & 0.721 & 0.709 & 0.730 \\
-roc\_auc & 0.937 & 0.934 & 0.940 \\
+precision & 0.974 & 0.968 & 0.980 \\
+recall & 0.533 & 0.519 & 0.547 \\
+f1 & 0.689 & 0.677 & 0.701 \\
+fpr & 0.001 & 0.001 & 0.001 \\
+mcc & 0.711 & 0.701 & 0.721 \\
+pr\_auc & 0.722 & 0.711 & 0.731 \\
+roc\_auc & 0.938 & 0.935 & 0.941 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -147,13 +147,13 @@ roc\_auc & 0.937 & 0.934 & 0.940 \\
 \toprule
 Model & Role & Features & Precision & Recall & F1 & F1 seed std & FPR & MCC & PR-AUC & ROC-AUC & Micro-F1 \\
 \midrule
-Logistic Regression & baseline & all & 0.255 & 0.525 & 0.343 & -- & 0.014 & 0.358 & 0.201 & 0.931 & 0.981 \\
-Isolation Forest (unsupervised) & baseline & all & 0.340 & 0.105 & 0.161 & -- & 0.002 & 0.185 & 0.117 & 0.832 & 0.990 \\
-Random Forest (50 trees, default) & baseline & all & 0.874 & 0.135 & 0.234 & -- & 0.000 & 0.342 & 0.794 & 0.960 & 0.992 \\
-LightGBM & member & all & 0.647 & 0.576 & 0.609 & 0.157 & 0.003 & 0.607 & 0.652 & 0.976 & 0.993 \\
-XGBoost & member & all & 0.811 & 0.651 & 0.722 & 0.035 & 0.001 & 0.724 & 0.736 & 0.971 & 0.995 \\
-Random Forest & member & all & 0.235 & 0.176 & 0.201 & -- & 0.005 & 0.197 & 0.422 & 0.978 & 0.987 \\
-Ensemble (ours) & ensemble & all & 0.715 & 0.547 & 0.620 & -- & 0.002 & 0.623 & 0.664 & 0.980 & 0.994 \\
+Logistic Regression & baseline & all & 0.613 & 0.662 & 0.637 & -- & 0.049 & 0.593 & 0.665 & 0.927 & 0.921 \\
+Isolation Forest (unsupervised) & baseline & all & 0.431 & 0.303 & 0.356 & -- & 0.047 & 0.301 & 0.501 & 0.830 & 0.885 \\
+Random Forest (50 trees, default) & baseline & all & 0.876 & 0.174 & 0.291 & -- & 0.003 & 0.367 & 0.856 & 0.968 & 0.911 \\
+LightGBM & member & all & 0.865 & 0.666 & 0.752 & 0.051 & 0.012 & 0.735 & 0.864 & 0.974 & 0.954 \\
+XGBoost & member & all & 0.895 & 0.590 & 0.712 & 0.001 & 0.008 & 0.703 & 0.843 & 0.965 & 0.950 \\
+Random Forest & member & all & 0.762 & 0.616 & 0.682 & -- & 0.023 & 0.653 & 0.724 & 0.960 & 0.940 \\
+Ensemble (ours) & ensemble & all & 0.833 & 0.675 & 0.746 & -- & 0.016 & 0.724 & 0.829 & 0.969 & 0.952 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -166,13 +166,13 @@ Ensemble (ours) & ensemble & all & 0.715 & 0.547 & 0.620 & -- & 0.002 & 0.623 & 
 \toprule
 Metric & Estimate & CI 2.5\% & CI 97.5\% \\
 \midrule
-precision & 0.715 & 0.679 & 0.751 \\
-recall & 0.547 & 0.514 & 0.587 \\
-f1 & 0.620 & 0.589 & 0.649 \\
-fpr & 0.002 & 0.002 & 0.002 \\
-mcc & 0.623 & 0.592 & 0.651 \\
-pr\_auc & 0.664 & 0.632 & 0.697 \\
-roc\_auc & 0.980 & 0.976 & 0.984 \\
+precision & 0.833 & 0.804 & 0.861 \\
+recall & 0.675 & 0.637 & 0.707 \\
+f1 & 0.746 & 0.718 & 0.770 \\
+fpr & 0.016 & 0.013 & 0.019 \\
+mcc & 0.724 & 0.696 & 0.750 \\
+pr\_auc & 0.829 & 0.802 & 0.853 \\
+roc\_auc & 0.969 & 0.963 & 0.974 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -191,10 +191,10 @@ Elmougy \& Liu (2023), as published & MLP & 0.611 & 0.613 & 0.612 \\
 Elmougy \& Liu (2023), as published & LSTM & 0.709 & 0.223 & 0.339 \\
 Elmougy \& Liu (2023), as published & XGBoost & 0.793 & 0.718 & 0.754 \\
 Elmougy \& Liu (2023), as published & RF+MLP+XGB ensemble & 0.962 & 0.723 & 0.826 \\
-Our reproduction (same split, original features, threshold 0.5) & Random Forest (50 trees, default) & 0.959 & 0.719 & 0.822 \\
+Our reproduction (same split, original features, threshold 0.5) & Random Forest (50 trees, default) & 0.964 & 0.720 & 0.825 \\
 This work & LightGBM & 0.952 & 0.731 & 0.827 \\
-This work & XGBoost & 0.885 & 0.734 & 0.803 \\
-This work & Random Forest & 0.961 & 0.714 & 0.819 \\
+This work & XGBoost & 0.896 & 0.736 & 0.808 \\
+This work & Random Forest & 0.949 & 0.718 & 0.818 \\
 This work & Ensemble (ours) & 0.961 & 0.729 & 0.829 \\
 \bottomrule
 \end{tabular}
@@ -214,11 +214,11 @@ Elmougy \& Liu (2023), as published & MLP & 0.708 & 0.502 & 0.587 \\
 Elmougy \& Liu (2023), as published & LSTM & 0.922 & 0.033 & 0.064 \\
 Elmougy \& Liu (2023), as published & XGBoost & 0.869 & 0.534 & 0.662 \\
 Elmougy \& Liu (2023), as published & RF+MLP+XGB ensemble & 0.933 & 0.572 & 0.709 \\
-Our reproduction (same split, original features, threshold 0.5) & Random Forest (50 trees, default) & 0.381 & 0.187 & 0.250 \\
+Our reproduction (same split, original features, threshold 0.5) & Random Forest (50 trees, default) & 0.405 & 0.193 & 0.262 \\
 This work & LightGBM & 0.957 & 0.560 & 0.707 \\
-This work & XGBoost & 0.928 & 0.502 & 0.651 \\
-This work & Random Forest & 0.940 & 0.519 & 0.669 \\
-This work & Ensemble (ours) & 0.908 & 0.583 & 0.710 \\
+This work & XGBoost & 0.968 & 0.444 & 0.609 \\
+This work & Random Forest & 0.939 & 0.442 & 0.601 \\
+This work & Ensemble (ours) & 0.974 & 0.533 & 0.689 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -231,8 +231,8 @@ This work & Ensemble (ours) & 0.908 & 0.583 & 0.710 \\
 \toprule
 Protocol & Precision & Recall & F1 & PR-AUC \\
 \midrule
-first-seen (one row per wallet, leak-free) & 0.908 & 0.583 & 0.710 & 0.721 \\
-row per wallet per time step & 0.909 & 0.573 & 0.702 & 0.715 \\
+first-seen (one row per wallet, leak-free) & 0.974 & 0.533 & 0.689 & 0.722 \\
+row per wallet per time step & 0.926 & 0.569 & 0.705 & 0.719 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -245,12 +245,12 @@ row per wallet per time step & 0.909 & 0.573 & 0.702 & 0.715 \\
 \toprule
 Layer & Features & \# features & Precision & Recall & F1 & PR-AUC & ROC-AUC \\
 \midrule
-transaction & Original features only & 182 & 0.911 & 0.731 & 0.811 & 0.800 & 0.934 \\
+transaction & Original features only & 182 & 0.900 & 0.733 & 0.808 & 0.800 & 0.934 \\
 transaction & + graph features (full model) & 555 & 0.961 & 0.729 & 0.829 & 0.806 & 0.942 \\
-transaction & Change from graph features & 373 & 0.050 & -0.002 & 0.018 & 0.005 & 0.009 \\
-wallet & Original features only & 55 & 0.634 & 0.249 & 0.357 & 0.426 & 0.892 \\
-wallet & + graph features (full model) & 174 & 0.908 & 0.583 & 0.710 & 0.721 & 0.937 \\
-wallet & Change from graph features & 119 & 0.274 & 0.335 & 0.353 & 0.295 & 0.045 \\
+transaction & Change from graph features & 373 & 0.061 & -0.004 & 0.021 & 0.005 & 0.008 \\
+wallet & Original features only & 55 & 0.582 & 0.294 & 0.390 & 0.421 & 0.892 \\
+wallet & + graph features (full model) & 174 & 0.974 & 0.533 & 0.689 & 0.722 & 0.938 \\
+wallet & Change from graph features & 119 & 0.392 & 0.240 & 0.299 & 0.301 & 0.046 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -263,8 +263,8 @@ wallet & Change from graph features & 119 & 0.274 & 0.335 & 0.353 & 0.295 & 0.04
 \toprule
 Period & Illicit & Detected & False alarms & Precision & Recall & F1 \\
 \midrule
-Steps 35-42 (before shutdown) & 914 & 787 & 13 & 0.984 & 0.861 & 0.918 \\
-Steps 43-49 (after shutdown) & 169 & 3 & 19 & 0.136 & 0.018 & 0.031 \\
+Steps 35-42 (before shutdown) & 914 & 787 & 14 & 0.983 & 0.861 & 0.918 \\
+Steps 43-49 (after shutdown) & 169 & 3 & 18 & 0.143 & 0.018 & 0.032 \\
 All test steps & 1,083 & 790 & 32 & 0.961 & 0.729 & 0.829 \\
 \bottomrule
 \end{tabular}
@@ -278,21 +278,21 @@ All test steps & 1,083 & 790 & 32 & 0.961 & 0.729 & 0.829 \\
 \toprule
 time\_step & n\_labelled & n\_positive & n\_flagged & tp & fp & fn & precision & recall & f1 \\
 \midrule
-35 & 5,172 & 429 & 400 & 388 & 12 & 41 & 0.970 & 0.904 & 0.936 \\
-36 & 8,755 & 589 & 616 & 586 & 30 & 3 & 0.951 & 0.995 & 0.973 \\
-37 & 3,268 & 429 & 360 & 338 & 22 & 91 & 0.939 & 0.788 & 0.857 \\
-38 & 3,376 & 183 & 109 & 103 & 6 & 80 & 0.945 & 0.563 & 0.705 \\
-39 & 3,646 & 127 & 75 & 71 & 4 & 56 & 0.947 & 0.559 & 0.703 \\
-40 & 8,257 & 442 & 220 & 183 & 37 & 259 & 0.832 & 0.414 & 0.553 \\
-41 & 5,642 & 172 & 105 & 104 & 1 & 68 & 0.990 & 0.605 & 0.751 \\
-42 & 9,188 & 399 & 199 & 174 & 25 & 225 & 0.874 & 0.436 & 0.582 \\
-43 & 5,928 & 97 & 8 & 3 & 5 & 94 & 0.375 & 0.031 & 0.057 \\
-44 & 7,877 & 279 & 240 & 204 & 36 & 75 & 0.850 & 0.731 & 0.786 \\
-45 & 8,871 & 27 & 57 & 1 & 56 & 26 & 0.018 & 0.037 & 0.024 \\
-46 & 4,335 & 508 & 513 & 497 & 16 & 11 & 0.969 & 0.978 & 0.974 \\
-47 & 6,724 & 196 & 5 & 1 & 4 & 195 & 0.200 & 0.005 & 0.010 \\
-48 & 7,089 & 381 & 31 & 22 & 9 & 359 & 0.710 & 0.058 & 0.107 \\
-49 & 4,323 & 631 & 203 & 176 & 27 & 455 & 0.867 & 0.279 & 0.422 \\
+35 & 5,172 & 429 & 375 & 374 & 1 & 55 & 0.997 & 0.872 & 0.930 \\
+36 & 8,755 & 589 & 595 & 583 & 12 & 6 & 0.980 & 0.990 & 0.985 \\
+37 & 3,268 & 429 & 343 & 329 & 14 & 100 & 0.959 & 0.767 & 0.852 \\
+38 & 3,376 & 183 & 95 & 94 & 1 & 89 & 0.989 & 0.514 & 0.676 \\
+39 & 3,646 & 127 & 55 & 55 & 0 & 72 & 1.000 & 0.433 & 0.604 \\
+40 & 8,257 & 442 & 172 & 167 & 5 & 275 & 0.971 & 0.378 & 0.544 \\
+41 & 5,642 & 172 & 83 & 83 & 0 & 89 & 1.000 & 0.483 & 0.651 \\
+42 & 9,188 & 399 & 156 & 146 & 10 & 253 & 0.936 & 0.366 & 0.526 \\
+43 & 5,928 & 97 & 4 & 0 & 4 & 97 & 0.000 & 0.000 & 0.000 \\
+44 & 7,877 & 279 & 195 & 189 & 6 & 90 & 0.969 & 0.677 & 0.797 \\
+45 & 8,871 & 27 & 10 & 0 & 10 & 27 & 0.000 & 0.000 & 0.000 \\
+46 & 4,335 & 508 & 422 & 422 & 0 & 86 & 1.000 & 0.831 & 0.908 \\
+47 & 6,724 & 196 & 1 & 0 & 1 & 196 & 0.000 & 0.000 & 0.000 \\
+48 & 7,089 & 381 & 4 & 2 & 2 & 379 & 0.500 & 0.005 & 0.010 \\
+49 & 4,323 & 631 & 165 & 162 & 3 & 469 & 0.982 & 0.257 & 0.407 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -305,7 +305,7 @@ time\_step & n\_labelled & n\_positive & n\_flagged & tp & fp & fn & precision &
 \toprule
 time\_step & n\_labelled & n\_positive & n\_flagged & tp & fp & fn & precision & recall & f1 \\
 \midrule
-5 & 82,460 & 769 & 589 & 421 & 168 & 348 & 0.715 & 0.547 & 0.620 \\
+5 & 7,345 & 769 & 623 & 519 & 104 & 250 & 0.833 & 0.675 & 0.746 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -320,7 +320,7 @@ True label (test period) & licit & suspicious & illicit & total \\
 \midrule
 illicit & 293 & 0 & 790 & 1,083 \\
 licit & 15,555 & 0 & 32 & 15,587 \\
-unlabelled & 47,060 & 0 & 3,774 & 50,834 \\
+unlabelled & 46,998 & 0 & 3,836 & 50,834 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -333,9 +333,9 @@ unlabelled & 47,060 & 0 & 3,774 & 50,834 \\
 \toprule
 True label (test period) & licit & suspicious & illicit & total \\
 \midrule
-illicit & 1,497 & 541 & 2,851 & 4,889 \\
-licit & 82,824 & 4,448 & 290 & 87,562 \\
-unlabelled & 157,820 & 31,737 & 10,094 & 199,651 \\
+illicit & 1,522 & 761 & 2,606 & 4,889 \\
+licit & 82,946 & 4,547 & 69 & 87,562 \\
+unlabelled & 158,326 & 35,674 & 5,651 & 199,651 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -348,9 +348,9 @@ unlabelled & 157,820 & 31,737 & 10,094 & 199,651 \\
 \toprule
 True label (test period) & benign & suspicious & attack & total \\
 \midrule
-attack & 62 & 286 & 421 & 769 \\
-benign & 78,288 & 3,235 & 168 & 81,691 \\
-unlabelled & 1,106 & 97 & 12 & 1,215 \\
+attack & 107 & 143 & 519 & 769 \\
+benign & 6,225 & 247 & 104 & 6,576 \\
+unlabelled & 1,058 & 97 & 60 & 1,215 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -363,7 +363,7 @@ unlabelled & 1,106 & 97 & 12 & 1,215 \\
 \toprule
 attack\_type & windows & detected & detection\_rate & detected\_or\_suspicious\_rate \\
 \midrule
-nerisbotnet & 666 & 326 & 0.489 & 0.919 \\
+nerisbotnet & 666 & 424 & 0.637 & 0.851 \\
 dos & 72 & 72 & 1.000 & 1.000 \\
 scan44 & 24 & 19 & 0.792 & 0.792 \\
 scan11 & 7 & 4 & 0.571 & 0.571 \\
@@ -379,12 +379,12 @@ scan11 & 7 & 4 & 0.571 & 0.571 \\
 \toprule
 Quantity & Value \\
 \midrule
-background\_rate & 0.2500 \\
-precision\_sampled & 0.7148 \\
-precision\_corrected & 0.3852 \\
-recall & 0.5475 \\
-f1\_corrected & 0.4522 \\
-fpr & 0.0021 \\
+background\_rate & 0.0200 \\
+precision\_sampled & 0.8331 \\
+precision\_corrected & 0.0908 \\
+recall & 0.6749 \\
+f1\_corrected & 0.1600 \\
+fpr & 0.0158 \\
 \bottomrule
 \end{tabular}
 \end{table}

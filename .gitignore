@@ -1,6 +1,11 @@
 ﻿# Source datasets are large and can be downloaded separately (see README.md).
 Dataset_elliptic++/
 Dataset_UGR/
+EllipticPlusPlus-main/
+
+# Virtual environment and OS files
+.venv/
+.DS_Store
 
 # Generated experiment results and archived runs can be regenerated with run_all.py.
 outputs/
